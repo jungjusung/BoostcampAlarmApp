@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AlarmApp</string>
+    <string name="tv_am">AM</string>
+    <string name="tv_pm">PM</string>
+    <string name="tv_time">6:40</string>
+    <string name="tv_alarm_on">On</string>
+    <string name="tv_alarm_off">On</string>
+</resources>
