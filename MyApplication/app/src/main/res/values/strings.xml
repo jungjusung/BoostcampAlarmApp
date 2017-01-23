@@ -5,4 +5,27 @@
     <string name="tv_time">6:40</string>
     <string name="tv_alarm_on">On</string>
     <string name="tv_alarm_off">On</string>
+    <string name="tv_day">월 화 수 목 금 토 일</string>
+    <string name="tv_memo">memo</string>
+    <string name="action_setting">Setting</string>
+    <string name="action_add_alarm">AddAlarm</string>
+    <string name="action_save">save</string>
+    <string name="tv_add_memo">메모</string>
+    <string name="ed_add_memo">알림 메세지를 입력</string>
+    <string name="tv_sound">사운드</string>
+    <string name="tv_seleted_sound">알람1</string>
+    <string name="tv_iteration">반복</string>
+    <string name="tv_replay">다시 알림</string>
+    <string name="tv_iter">월 화 수 목 금</string>
+    <string name="tv_optional">추가 기능</string>
+    <string name="action_sound">사운드 설정</string>
+    <string name="action_optional">추가 기능 설정</string>
+    <string name="action_iteration">반복 설정</string>
+    <string name="tv_sunday">일요일마다</string>
+    <string name="tv_monday">월요일마다</string>
+    <string name="tv_tuesday">화요일마다</string>
+    <string name="tv_wednesday">수요일마다</string>
+    <string name="tv_thursday">목요일마다</string>
+    <string name="tv_friday">금요일마다</string>
+    <string name="tv_saturday">토요일마다</string>
 </resources>

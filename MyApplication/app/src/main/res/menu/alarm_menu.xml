@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="@string/action_setting"
+        android:icon="@drawable/ic_settings"
+        android:orderInCategory="1"
+        app:showAsAction="ifRoom"
+        android:id="@+id/action_setting"
+        />
+    <item
+        android:title="@string/action_add_alarm"
+        android:icon="@drawable/ic_add"
+        android:orderInCategory="2"
+        app:showAsAction="ifRoom"
+        android:id="@+id/action_add_alarm"/>
+</menu>
