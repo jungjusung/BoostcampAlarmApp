@@ -19,6 +19,7 @@ public class Alarm extends RealmObject {
     private RealmList<RealmString> iterList;
     private String alarm_memo;
     private String alarm_sound;
+    private String alarm_optional;
     private boolean alarm_replay;
 
 
@@ -68,6 +69,14 @@ public class Alarm extends RealmObject {
 
     public void setAlarm_sound(String alarm_sound) {
         this.alarm_sound = alarm_sound;
+    }
+
+    public String getAlarm_optional() {
+        return alarm_optional;
+    }
+
+    public void setAlarm_optional(String alarm_optional) {
+        this.alarm_optional = alarm_optional;
     }
 
     public boolean isAlarm_replay() {
