@@ -3,19 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="12"
     android:paddingLeft="16sp"
     android:paddingRight="16sp"
-    >
+    android:weightSum="12">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/border"
-        />
+        android:background="@drawable/border" />
 
     <LinearLayout
+        android:id="@+id/ll_sun"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -25,29 +24,27 @@
         android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_sunday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:id="@+id/iv_sun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_mon"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -57,29 +54,27 @@
         android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_monday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:id="@+id/iv_mon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_tue"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -89,29 +84,28 @@
         android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_tuesday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:id="@+id/iv_tue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_wed"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -121,29 +115,27 @@
         android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_wednesday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:id="@+id/iv_wed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_thu"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -153,29 +145,27 @@
         android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_thursday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:id="@+id/iv_thu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_fri"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -185,58 +175,52 @@
         android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_friday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:id="@+id/iv_fri"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_sat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@drawable/border"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:background="@drawable/border"
-        >
+        android:paddingRight="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
             android:text="@string/tv_saturday"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
-
+            android:id="@+id/iv_sat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
     </LinearLayout>
 </LinearLayout>

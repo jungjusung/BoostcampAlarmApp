@@ -24,21 +24,24 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.sql.Time;
+import java.util.ArrayList;
 
 /**
  * Created by Jusung on 2017. 1. 23..
  */
 
-public class AddAlarmActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddAlarmActivity extends AppCompatActivity implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
 
 
     private static final int REQUEST_SOUND = 1;
@@ -51,8 +54,12 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     TimePicker mTimePicker;
     Resources system;
     Animation mFadeIn, mFadeOut;
-    TextView mTextSound;
     String TAG;
+
+
+    EditText mEditMemo;
+    TextView mTextSound,mTextIteration;
+    Switch mSwReplay;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,11 +72,18 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         mOptional = (LinearLayout) findViewById(R.id.ll_optional);
         mTimePicker = (TimePicker) findViewById(R.id.tp_time);
 
+        //DB 넘길 자료들
+        mEditMemo=(EditText)findViewById(R.id.et_memo);
         mTextSound=(TextView)findViewById(R.id.tv_sound);
+        mTextIteration=(TextView)findViewById(R.id.tv_iteration);
+        mSwReplay=(Switch)findViewById(R.id.sw_replay);
+
         mSound.setOnClickListener(this);
         mIteration.setOnClickListener(this);
         mReplay.setOnClickListener(this);
         mOptional.setOnClickListener(this);
+        mSwReplay.setOnCheckedChangeListener(this);
+
         set_timepicker_text_colour();
 
     }
@@ -87,7 +101,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -145,7 +158,14 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
             }
         } else if (requestCode == REQUEST_ITERATION && data != null) {
             if (resultCode == Activity.RESULT_OK) {
-                // 반복 액티비티에서 결과 넘어옴
+                Bundle rBundle=data.getExtras();
+                ArrayList<String> rList=rBundle.getStringArrayList("iteration_list");
+                StringBuffer sb=new StringBuffer();
+                for(String item:rList){
+                    sb.append(item+" ");
+                }
+                mTextIteration.setText(sb.toString());
+
             }
         } else if (requestCode == REQUEST_OPTIONAL && data != null) {
             if (resultCode == Activity.RESULT_OK) {
@@ -192,4 +212,12 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecking) {
+        if (isChecking){
+            Toast.makeText(this, "True", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "False", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
