@@ -28,4 +28,11 @@
     <string name="tv_thursday">목요일마다</string>
     <string name="tv_friday">금요일마다</string>
     <string name="tv_saturday">토요일마다</string>
+    <string name="tv_default">없음</string>
+    <string name="tv_wake_up_song">아침 알람</string>
+    <string name="tv_minions">미니언즈 알람</string>
+    <string name="tv_jarvis">자비스 알람</string>
+    <string name="tv_cheer">활기찬 알람</string>
+    <string name="tv_energy_sound">신나는 알람</string>
+    <string name="tv_mirotic_sound">신비한 알람</string>
 </resources>

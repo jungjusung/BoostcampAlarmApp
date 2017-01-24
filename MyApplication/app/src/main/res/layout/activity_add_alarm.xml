@@ -13,6 +13,7 @@
         android:background="@drawable/border">
 
         <TimePicker
+            android:id="@+id/tp_time"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:timePickerMode="spinner"></TimePicker>
@@ -77,6 +78,7 @@
 
 
             <TextView
+                android:id="@+id/tv_sound"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2.5"

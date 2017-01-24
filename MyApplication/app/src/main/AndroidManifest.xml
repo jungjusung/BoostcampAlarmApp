@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
-            android:launchMode="singleTop"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +20,6 @@
         <activity
             android:name=".AddAlarmActivity"
             android:label="@string/action_add_alarm"
-            android:launchMode="singleTop"
             android:parentActivityName=".AddAlarmActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

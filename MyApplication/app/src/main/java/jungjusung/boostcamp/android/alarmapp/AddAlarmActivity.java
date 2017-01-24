@@ -3,64 +3,87 @@ package jungjusung.boostcamp.android.alarmapp;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.lang.reflect.Field;
+import java.sql.Time;
 
 /**
  * Created by Jusung on 2017. 1. 23..
  */
 
-public class AddAlarmActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddAlarmActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private static final int REQUEST_SOUND=1;
-    private static final int REQUEST_ITERATION=2;
-    private static final int REQUEST_OPTIONAL=3;
+    private static final int REQUEST_SOUND = 1;
+    private static final int REQUEST_ITERATION = 2;
+    private static final int REQUEST_OPTIONAL = 3;
     LinearLayout mSound;
     LinearLayout mIteration;
     LinearLayout mReplay;
     LinearLayout mOptional;
-    Animation mFadeIn,mFadeOut;
+    TimePicker mTimePicker;
+    Resources system;
+    Animation mFadeIn, mFadeOut;
+    TextView mTextSound;
+    String TAG;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_alarm);
-        mSound=(LinearLayout)findViewById(R.id.ll_sound);
-        mIteration=(LinearLayout)findViewById(R.id.ll_iteration);
-        mReplay=(LinearLayout)findViewById(R.id.ll_replay);
-        mOptional=(LinearLayout)findViewById(R.id.ll_optional);
+        TAG=this.getClass().getName();
+        mSound = (LinearLayout) findViewById(R.id.ll_sound);
+        mIteration = (LinearLayout) findViewById(R.id.ll_iteration);
+        mReplay = (LinearLayout) findViewById(R.id.ll_replay);
+        mOptional = (LinearLayout) findViewById(R.id.ll_optional);
+        mTimePicker = (TimePicker) findViewById(R.id.tp_time);
 
+        mTextSound=(TextView)findViewById(R.id.tv_sound);
         mSound.setOnClickListener(this);
         mIteration.setOnClickListener(this);
         mReplay.setOnClickListener(this);
         mOptional.setOnClickListener(this);
+        set_timepicker_text_colour();
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_menu,menu);
+        getMenuInflater().inflate(R.menu.add_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.action_save_alarm){
-            Toast.makeText(this,"알람을 저장합니다.", Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.action_save_alarm) {
+            Toast.makeText(this, "알람을 저장합니다.", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -68,42 +91,42 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-        int clickedView=view.getId();
-        Intent intent=null;
-        switch (clickedView){
+        int clickedView = view.getId();
+        Intent intent = null;
+        switch (clickedView) {
             case R.id.ll_sound:
-                Toast.makeText(this,"사운드 변경 클릭", Toast.LENGTH_SHORT).show();
-                mFadeOut=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
-                mFadeIn=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
+                Toast.makeText(this, "사운드 변경 클릭", Toast.LENGTH_SHORT).show();
+                mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
+                mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
                 view.startAnimation(mFadeIn);
-                intent=new Intent(getApplicationContext(),SoundActivity.class);
-                startActivityForResult(intent,REQUEST_SOUND);
+                intent = new Intent(getApplicationContext(), SoundActivity.class);
+                startActivityForResult(intent, REQUEST_SOUND);
                 break;
             case R.id.ll_iteration:
-                Toast.makeText(this,"반복 변경 클릭", Toast.LENGTH_SHORT).show();
-                mFadeOut=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
-                mFadeIn=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
+                Toast.makeText(this, "반복 변경 클릭", Toast.LENGTH_SHORT).show();
+                mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
+                mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
                 view.startAnimation(mFadeIn);
-                intent=new Intent(getApplicationContext(),IterationActivity.class);
-                startActivityForResult(intent,REQUEST_ITERATION);
+                intent = new Intent(getApplicationContext(), IterationActivity.class);
+                startActivityForResult(intent, REQUEST_ITERATION);
                 break;
             case R.id.ll_replay:
-                Toast.makeText(this,"다시 알림 클릭", Toast.LENGTH_SHORT).show();
-                mFadeOut=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
-                mFadeIn=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
+                Toast.makeText(this, "다시 알림 클릭", Toast.LENGTH_SHORT).show();
+                mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
+                mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
                 view.startAnimation(mFadeIn);
                 break;
             case R.id.ll_optional:
-                Toast.makeText(this,"추가 기능 클릭", Toast.LENGTH_SHORT).show();
-                mFadeOut=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
-                mFadeIn=AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
+                Toast.makeText(this, "추가 기능 클릭", Toast.LENGTH_SHORT).show();
+                mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
+                mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
                 view.startAnimation(mFadeIn);
-                intent=new Intent(getApplicationContext(),OptionalActivity.class);
-                startActivityForResult(intent,REQUEST_OPTIONAL);
+                intent = new Intent(getApplicationContext(), OptionalActivity.class);
+                startActivityForResult(intent, REQUEST_OPTIONAL);
                 break;
             default:
                 break;
@@ -113,20 +136,60 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==REQUEST_SOUND&&data!=null){
-            if(resultCode!= Activity.RESULT_OK){
+        if (requestCode == REQUEST_SOUND&&data!=null) {
+            if (resultCode == Activity.RESULT_OK) {
+                String soundName=data.getStringExtra("sound_name");
+                String soundUri=data.getStringExtra("sound_uri");
+                mTextSound.setText(soundName);
                 // 사운드 액티비티에서 결과 넘어옴
             }
-        }else if(requestCode==REQUEST_ITERATION&&data!=null){
-            if(resultCode!= Activity.RESULT_OK){
+        } else if (requestCode == REQUEST_ITERATION && data != null) {
+            if (resultCode == Activity.RESULT_OK) {
                 // 반복 액티비티에서 결과 넘어옴
             }
-        }else if(requestCode==REQUEST_OPTIONAL&&data!=null){
-            if(resultCode!= Activity.RESULT_OK){
+        } else if (requestCode == REQUEST_OPTIONAL && data != null) {
+            if (resultCode == Activity.RESULT_OK) {
                 // 추가 액티비티에서 결과 넘어옴
             }
         }
 
     }
+
+    private void set_numberpicker_text_colour(NumberPicker number_picker) {
+        final int count = number_picker.getChildCount();
+        final NumberPicker c=number_picker;
+        for (int i = 0; i < count; i++) {
+            final View child = number_picker.getChildAt(i);
+
+            try {
+                Field wheelpaint_field = number_picker.getClass().getDeclaredField("mSelectorWheelPaint");
+                wheelpaint_field.setAccessible(true);
+                int selectedColor = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark);
+                ((Paint) wheelpaint_field.get(number_picker)).setColor(selectedColor);
+                ((EditText) child).setTextColor(selectedColor);
+                ((EditText) child).setTextSize(20);
+                number_picker.invalidate();
+            } catch (NoSuchFieldException e) {
+            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
+            }
+        }
+    }
+
+
+    private void set_timepicker_text_colour() {
+        system = Resources.getSystem();
+        int hour_numberpicker_id = system.getIdentifier("hour", "id", "android");
+        int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
+        int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
+        NumberPicker hour_numberpicker = (NumberPicker) mTimePicker.findViewById(hour_numberpicker_id);
+        NumberPicker minute_numberpicker = (NumberPicker) mTimePicker.findViewById(minute_numberpicker_id);
+        NumberPicker ampm_numberpicker = (NumberPicker) mTimePicker.findViewById(ampm_numberpicker_id);
+
+        set_numberpicker_text_colour(hour_numberpicker);
+        set_numberpicker_text_colour(minute_numberpicker);
+        set_numberpicker_text_colour(ampm_numberpicker);
+    }
+
+
 }
