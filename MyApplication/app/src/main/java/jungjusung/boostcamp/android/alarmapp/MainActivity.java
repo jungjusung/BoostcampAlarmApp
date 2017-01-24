@@ -6,17 +6,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class MainActivity extends AppCompatActivity {
+
 
     private RecyclerView mAlarmList;
     private AlarmAdapter alarmAdapter;
+    String TAG;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TAG=this.getClass().getName();
         setContentView(R.layout.activity_main);
         Context context=this.getApplicationContext();
         mAlarmList=(RecyclerView)findViewById(R.id.rv_alarmlist);
@@ -24,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
         mAlarmList.setLayoutManager(layoutManager);
         mAlarmList.setHasFixedSize(true);
 
-        alarmAdapter = new AlarmAdapter(100,context);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
+        alarmAdapter = new AlarmAdapter(list.size(),context);
         mAlarmList.setAdapter(alarmAdapter);
     }
 
@@ -50,5 +59,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
+        alarmAdapter.setItem(list.size());
+        alarmAdapter.notifyDataSetChanged();
+        Log.d(TAG,list.size()+" onResume");
     }
 }

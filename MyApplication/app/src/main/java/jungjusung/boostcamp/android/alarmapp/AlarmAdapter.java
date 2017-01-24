@@ -35,7 +35,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmViewHolder>{
 
         return alarmViewHolder;
     }
-
+    public void setItem(int size){
+        mAlarmItems=size;
+    }
     @Override
     public void onBindViewHolder(AlarmViewHolder holder, int position) {
         Log.d(TAG, "#" + position);

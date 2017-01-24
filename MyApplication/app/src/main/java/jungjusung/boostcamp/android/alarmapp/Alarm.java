@@ -14,14 +14,15 @@ public class Alarm extends RealmObject {
 
     @PrimaryKey
     private int alarm_id;
-    private boolean isDoing;
-    private String alarm_time;
+    private boolean alarm_isDoing;
+    private String alarm_hour;
+    private String alarm_minute;
     private RealmList<RealmString> iterList;
     private String alarm_memo;
-    private String alarm_sound;
+    private String alarm_sound_name;
+    private String alarm_sound_uri;
     private String alarm_optional;
     private boolean alarm_replay;
-
 
     public int getAlarm_id() {
         return alarm_id;
@@ -31,20 +32,28 @@ public class Alarm extends RealmObject {
         this.alarm_id = alarm_id;
     }
 
-    public boolean isDoing() {
-        return isDoing;
+    public boolean isAlarm_isDoing() {
+        return alarm_isDoing;
     }
 
-    public void setDoing(boolean doing) {
-        isDoing = doing;
+    public void setAlarm_isDoing(boolean alarm_isDoing) {
+        this.alarm_isDoing = alarm_isDoing;
     }
 
-    public String getAlarm_time() {
-        return alarm_time;
+    public String getAlarm_hour() {
+        return alarm_hour;
     }
 
-    public void setAlarm_time(String alarm_time) {
-        this.alarm_time = alarm_time;
+    public void setAlarm_hour(String alarm_hour) {
+        this.alarm_hour = alarm_hour;
+    }
+
+    public String getAlarm_minute() {
+        return alarm_minute;
+    }
+
+    public void setAlarm_minute(String alarm_minute) {
+        this.alarm_minute = alarm_minute;
     }
 
     public RealmList<RealmString> getIterList() {
@@ -63,12 +72,20 @@ public class Alarm extends RealmObject {
         this.alarm_memo = alarm_memo;
     }
 
-    public String getAlarm_sound() {
-        return alarm_sound;
+    public String getAlarm_sound_name() {
+        return alarm_sound_name;
     }
 
-    public void setAlarm_sound(String alarm_sound) {
-        this.alarm_sound = alarm_sound;
+    public void setAlarm_sound_name(String alarm_sound_name) {
+        this.alarm_sound_name = alarm_sound_name;
+    }
+
+    public String getAlarm_sound_uri() {
+        return alarm_sound_uri;
+    }
+
+    public void setAlarm_sound_uri(String alarm_sound_uri) {
+        this.alarm_sound_uri = alarm_sound_uri;
     }
 
     public String getAlarm_optional() {

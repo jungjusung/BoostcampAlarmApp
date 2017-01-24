@@ -9,9 +9,19 @@ import io.realm.Realm;
  */
 
 public class RealmInit extends Application{
+    private int REALM_INDEX=0;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
+    }
+
+    public int getREALM_INDEX() {
+        return REALM_INDEX;
+    }
+
+    public void setREALM_INDEX(int REALM_INDEX) {
+        this.REALM_INDEX = REALM_INDEX;
     }
 }
