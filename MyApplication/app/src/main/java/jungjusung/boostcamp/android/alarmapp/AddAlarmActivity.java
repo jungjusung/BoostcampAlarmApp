@@ -256,8 +256,13 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         RealmResults<Alarm> result=realm.where(Alarm.class).findAll();
         Toast.makeText(this, "DB 갯수 : "+result.size(), Toast.LENGTH_SHORT).show();
         RealmInit init = (RealmInit)getApplication();
-        int sequnceNumber = init.getREALM_INDEX()+1;
-        init.setREALM_INDEX(sequnceNumber);
+        int sequnceNumber=0;
+        try {
+            if(realm.where(Alarm.class).findAll().size()>0)
+                sequnceNumber=realm.where(Alarm.class).max("alarm_id").intValue()+1;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            sequnceNumber=0;
+        }
         Alarm alarm = new Alarm();
         realm.beginTransaction();
 

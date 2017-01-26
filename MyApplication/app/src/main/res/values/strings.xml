@@ -35,4 +35,7 @@
     <string name="tv_cheer">활기찬 알람</string>
     <string name="tv_energy_sound">신나는 알람</string>
     <string name="tv_mirotic_sound">신비한 알람</string>
+    <string name="notification_content">알람 해제 버튼을 눌러주세요.</string>
+    <string name="notification_title">알람</string>
+    <string name="action_detail">알람 정보</string>
 </resources>

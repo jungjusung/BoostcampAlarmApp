@@ -1,12 +1,19 @@
 package jungjusung.boostcamp.android.alarmapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.Calendar;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -28,7 +35,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
     private Realm realm;
     String TAG;
     Context context;
-
+    String[] mDays=new String[]{"","일","월","화","수","목","금","토"};
     public AlarmViewHolder(View itemView, Context context) {
         super(itemView);
         this.context = context;
@@ -72,6 +79,60 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
             }
             mAlarmSoundName.setText(alarm.getAlarm_sound_name());
             mAlarmMemo.setText(alarm.getAlarm_memo());
+            startAlarm(alarm.isAlarm_replay(),alarm);
         }
+    }
+
+    public void startAlarm(boolean isReapeating, Alarm alarm) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent activityIntent = new Intent(context, AlarmActivityReceiver.class);
+        Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
+        notiIntent.putExtra("sound_uri",alarm.getAlarm_sound_uri());
+        notiIntent.putExtra("id",alarm.getAlarm_id());
+        PendingIntent pendingNotiIntent = PendingIntent.getBroadcast(context, alarm.getAlarm_id(), notiIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingActivityIntent = PendingIntent.getBroadcast(context, alarm.getAlarm_id(), activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Calendar calendar = Calendar.getInstance();
+        boolean findDay=false;
+        RealmList<RealmString> days=alarm.getIterList();
+        for(RealmString day:days){
+            if(day.getValue().equals(mDays[calendar.get(Calendar.DAY_OF_WEEK)])){
+                findDay=true;
+                break;
+            }
+        }
+        if(!findDay) {
+            return;
+        }else{
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(alarm.getAlarm_hour()));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(alarm.getAlarm_minute()));
+            calendar.set(Calendar.SECOND, 0);
+        }
+
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            if (!isReapeating) {
+                //반복하지 않음
+                manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingNotiIntent);
+                manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingActivityIntent);
+            } else {
+                //반복함
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingNotiIntent);
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
+            }
+        } else {
+            if (!isReapeating) {
+                //반복하지 않음
+                manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingNotiIntent);
+                manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingActivityIntent);
+            } else {
+                //반복함
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingNotiIntent);
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
+            }
+        }
+
+
     }
 }

@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jungjusung.boostcamp.android.alarmapp">
 
+    //진동 사용
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <application
         android:name=".RealmInit"
         android:allowBackup="true"
@@ -49,6 +53,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AddAlarmActivity"/>
         </activity>
+        <activity
+            android:name=".AlarmDetail"
+            android:label="@string/action_detail"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+            </activity>
+        <receiver android:name=".AlarmActivityReceiver"/>
+        <receiver android:name=".AlarmNotificationReceiver"/>
     </application>
 
 </manifest>
