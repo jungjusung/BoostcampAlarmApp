@@ -38,10 +38,7 @@ public class BootReceiver extends BroadcastReceiver {
         }
     }
     public void startAlarm(boolean isReapeating, Alarm alarm,Context context) {
-        boolean settingFlag = alarm.isAlarm_setting_receiver();
-        if (settingFlag)
-            return;
-
+        
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm temp = alarm;

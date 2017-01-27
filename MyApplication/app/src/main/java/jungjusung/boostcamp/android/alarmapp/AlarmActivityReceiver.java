@@ -21,6 +21,7 @@ public class AlarmActivityReceiver extends BroadcastReceiver {
 
         Log.d(TAG,"리시버 액티비티 호출");
         Intent detailIntent=new Intent(context,AlarmDetail.class);
+        detailIntent.putExtra("alarm_repeat",true);
         detailIntent.putExtra("alarm_id",id);
         PendingIntent pi=PendingIntent.getActivity(context,id,detailIntent,PendingIntent.FLAG_ONE_SHOT);
 

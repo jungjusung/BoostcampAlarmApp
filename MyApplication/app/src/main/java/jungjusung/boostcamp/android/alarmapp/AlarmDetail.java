@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -39,8 +40,7 @@ import io.realm.RealmResults;
 /**
  * Created by Jusung on 2017. 1. 27..
  */
-public class AlarmDetail extends AppCompatActivity implements View.OnClickListener,View.OnTouchListener{
-
+public class AlarmDetail extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
 
     private static final int REQUEST_SOUND = 1;
@@ -66,6 +66,9 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     Alarm alarm = null;
     String TAG;
     int alarm_id;
+    boolean alarm_repeat;
+    private String[] mDays = new String[]{"", "일", "월", "화", "수", "목", "금", "토"};
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,12 +76,12 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         TAG = this.getClass().getName();
         Intent intent = getIntent();
         alarm_id = intent.getIntExtra("alarm_id", -1);
-
+        alarm_repeat=intent.getBooleanExtra("alarm_repeat",false);
         Realm realm = Realm.getDefaultInstance();
         if (alarm_id != -1) {
             alarm = realm.where(Alarm.class).equalTo("alarm_id", alarm_id).findFirst();
         }
-        mLayout=(LinearLayout)findViewById(R.id.ll_detail);
+        mLayout = (LinearLayout) findViewById(R.id.ll_detail);
         mSound = (LinearLayout) findViewById(R.id.ll_sound);
         mIteration = (LinearLayout) findViewById(R.id.ll_iteration);
         mReplay = (LinearLayout) findViewById(R.id.ll_replay);
@@ -91,6 +94,8 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         mTextIteration = (TextView) findViewById(R.id.tv_iteration);
         mSwReplay = (Switch) findViewById(R.id.sw_replay);
         mDeleteAlarm = (Button) findViewById(R.id.btn_delete);
+        repeatAlarm();
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             mTimePicker.setCurrentHour(Integer.parseInt(alarm.getAlarm_hour()));
             mTimePicker.setCurrentMinute(Integer.parseInt(alarm.getAlarm_minute()));
@@ -132,6 +137,10 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             Toast.makeText(this, "알람수정", Toast.LENGTH_SHORT).show();
             updateAlarmSetRealmDB(alarm.getAlarm_id());
         } else if (item.getItemId() == android.R.id.home) {
+            NotificationManager notificationManager
+                    = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(alarm_id);
+            //repeatAlarm();
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
@@ -184,7 +193,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.btn_delete:
                 Toast.makeText(this, "디비 삭제", Toast.LENGTH_SHORT).show();
-                deleteAlarmFromRealmDB(alarm.getAlarm_id());
+                deleteAlarmFromRealmDB(alarm_id);
             default:
                 break;
         }
@@ -238,7 +247,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             result.setAlarm_hour(String.valueOf(mTimePicker.getHour()));
             result.setAlarm_minute(String.valueOf(mTimePicker.getMinute()));
         }
-        if(tempList!=null)
+        if (tempList != null)
             result.setIterList(tempList);
         result.setAlarm_memo(mEditMemo.getText().toString());
         result.setAlarm_sound_name(mSoundName);
@@ -253,25 +262,32 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     }
 
     public void deleteAlarmFromRealmDB(int index) {
+        deleteBroadCast(index);
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm result = realm.where(Alarm.class).equalTo("alarm_id", index).findFirst();
         result.deleteFromRealm();
         realm.commitTransaction();
         //리시버도 같이 지워줘야 한다.
-        deleteBroadCast(index);
         onBackPressed();
     }
 
     public void deleteBroadCast(int index) {
-        Context context=this.getApplicationContext();
+        Context context = this.getApplicationContext();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
         Intent activityIntent = new Intent(context, AlarmActivityReceiver.class);
-        Intent detailIntent=new Intent(context,AlarmDetail.class);
+        Intent detailIntent = new Intent(context, AlarmDetail.class);
         PendingIntent notiPendingIntent = PendingIntent.getBroadcast(context, index, notiIntent, PendingIntent.FLAG_NO_CREATE);
         PendingIntent activityPendingIntent = PendingIntent.getBroadcast(context, index, activityIntent, PendingIntent.FLAG_NO_CREATE);
-        PendingIntent detailPendingIntent=PendingIntent.getActivity(context,index,detailIntent,PendingIntent.FLAG_NO_CREATE);
+        PendingIntent detailPendingIntent = PendingIntent.getActivity(context, index, detailIntent, PendingIntent.FLAG_NO_CREATE);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Alarm alarm = realm.where(Alarm.class).equalTo("alarm_id", index).findFirst();
+        alarm.setAlarm_setting_receiver(false);
+        realm.insertOrUpdate(alarm);
+        realm.commitTransaction();
+
         if (notiPendingIntent != null) {
             alarmManager.cancel(notiPendingIntent);
             notiPendingIntent.cancel();
@@ -280,37 +296,50 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             alarmManager.cancel(activityPendingIntent);
             activityPendingIntent.cancel();
         }
-        if(detailPendingIntent!=null){
+        if (detailPendingIntent != null) {
             alarmManager.cancel(detailPendingIntent);
             detailPendingIntent.cancel();
         }
 
     }
+
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        if(view.getId()==R.id.ll_detail) {
-            Context context=this.getApplicationContext();
+        if (view.getId() == R.id.ll_detail) {
             NotificationManager notificationManager
                     = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(alarm_id);
-            //노티를 지운다.
-
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
-            Intent activityIntent = new Intent(context, AlarmActivityReceiver.class);
-
-            PendingIntent notiPendingIntent = PendingIntent.getBroadcast(context, alarm_id, notiIntent, PendingIntent.FLAG_NO_CREATE);
-            PendingIntent activityPendingIntent = PendingIntent.getBroadcast(context, alarm_id, activityIntent, PendingIntent.FLAG_NO_CREATE);
-            if(alarm.isAlarm_replay()&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                //도즈 모드 방지하기 위해 다시 호출!
-                //deleteBroadCast(alarm_id);
-                Log.d(TAG,"도므조드방지");
-                alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + 3*60*1000, notiPendingIntent), notiPendingIntent);
-                alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + 3*60*1000, activityPendingIntent), activityPendingIntent);
-            }
+            //repeatAlarm();
             return true;
         }
         return false;
     }
 
+    public void repeatAlarm() {
+        if (alarm_repeat&&alarm.isAlarm_isDoing() && alarm.isAlarm_replay() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            deleteBroadCast(alarm_id);
+            Realm realm=Realm.getDefaultInstance();
+            realm.beginTransaction();
+            Alarm alarm=realm.where(Alarm.class).equalTo("alarm_id",alarm_id).findFirst();
+            alarm.setAlarm_setting_receiver(true);
+            realm.insertOrUpdate(alarm);
+            realm.commitTransaction();
+            
+            Context context = getApplicationContext();
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
+            notiIntent.putExtra("sound_uri", alarm.getAlarm_sound_uri());
+            notiIntent.putExtra("id", alarm.getAlarm_id());
+            Intent activityIntent = new Intent(context, AlarmActivityReceiver.class);
+            activityIntent.putExtra("id", alarm.getAlarm_id());
+            PendingIntent notiPendingIntent = PendingIntent.getBroadcast(context, alarm_id, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent activityPendingIntent = PendingIntent.getBroadcast(context, alarm_id, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Calendar c = Calendar.getInstance();
+
+            alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(c.getTimeInMillis() + 3 * 60 * 1000, notiPendingIntent), notiPendingIntent);
+            alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(c.getTimeInMillis() + 3 * 60 * 1000, activityPendingIntent), activityPendingIntent);
+        }
+    }
 }

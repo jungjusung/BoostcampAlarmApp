@@ -19,6 +19,8 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
         TAG=this.getClass().getName();
         String uri=intent.getStringExtra("sound_uri");
         int id=intent.getIntExtra("id",-1);
+        Log.d(TAG,id+"");
+        Log.d(TAG,uri+"");
         if(id==-1)
             return;
         PushWakeLock.acquireCpuWakeLock(context);
