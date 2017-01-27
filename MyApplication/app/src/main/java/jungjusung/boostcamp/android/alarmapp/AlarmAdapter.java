@@ -16,10 +16,17 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmViewHolder>{
     private int mAlarmItems;
     Context context;
     String TAG;
+    boolean isEditing;
+    final private ListItemClickListener mOnClickListener;
 
-    public AlarmAdapter(int mAlarmItems,Context context) {
+    public interface ListItemClickListener {
+        void onListItemClick(int clickedItemIndex);
+    }
+    public AlarmAdapter(int mAlarmItems,Context context,boolean isEditing,ListItemClickListener listener) {
         this.mAlarmItems = mAlarmItems;
         this.context=context;
+        this.isEditing=isEditing;
+        mOnClickListener=listener;
         TAG=this.getClass().getName();
     }
 
@@ -31,7 +38,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmViewHolder>{
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
         View view = inflater.inflate(listItem, viewGroup, shouldAttachToParentImmediately);
-        AlarmViewHolder alarmViewHolder = new AlarmViewHolder(view, context);
+        AlarmViewHolder alarmViewHolder = new AlarmViewHolder(view, context,mOnClickListener);
 
         return alarmViewHolder;
     }
@@ -41,11 +48,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmViewHolder>{
     @Override
     public void onBindViewHolder(AlarmViewHolder holder, int position) {
         Log.d(TAG, "#" + position);
-        holder.bind(position);
+        holder.bind(position,isEditing);
     }
 
     @Override
     public int getItemCount() {
         return mAlarmItems;
     }
+
+
 }

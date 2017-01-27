@@ -38,4 +38,6 @@
     <string name="notification_content">알람 해제 버튼을 눌러주세요.</string>
     <string name="notification_title">알람</string>
     <string name="action_detail">알람 정보</string>
+    <string name="action_edit">Edit</string>
+    <string name="btn_delete_alaram">알람 삭제</string>
 </resources>

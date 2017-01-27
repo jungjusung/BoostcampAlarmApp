@@ -19,11 +19,8 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
         TAG=this.getClass().getName();
         String uri=intent.getStringExtra("sound_uri");
         int id=intent.getIntExtra("id",-1);
-        Log.d(TAG,"노티온 : "+uri);
-        Log.d(TAG,"노티온 : "+id);
         if(id==-1)
             return;
-        Log.d(TAG,"작동??"+id);
         PushWakeLock.acquireCpuWakeLock(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
@@ -35,11 +32,14 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
                 .setContentText(context.getString(R.string.notification_content))
                 .setDefaults(Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE)
                 .setSound(Uri.parse(uri))
+                .setOngoing(true)
                 .setContentInfo("Info");
-
+        Notification noti=builder.build();
+        noti.flags=Notification.FLAG_NO_CLEAR;
         NotificationManager notificationManager
                 = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(id,builder.build());
+        notificationManager.notify(id,noti);
+
         PushWakeLock.releaseCpuLock();
     }
 }

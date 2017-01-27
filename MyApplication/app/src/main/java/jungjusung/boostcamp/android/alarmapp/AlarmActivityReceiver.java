@@ -15,11 +15,18 @@ public class AlarmActivityReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         TAG=this.getClass().getName();
+        int id=intent.getIntExtra("id",-1);
+        if(id==-1)
+            return;
+
         Log.d(TAG,"리시버 액티비티 호출");
-        intent=new Intent(context,AlarmDetail.class);
-        PendingIntent pi=PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_ONE_SHOT);
+        Intent detailIntent=new Intent(context,AlarmDetail.class);
+        detailIntent.putExtra("alarm_id",id);
+        PendingIntent pi=PendingIntent.getActivity(context,id,detailIntent,PendingIntent.FLAG_ONE_SHOT);
+
         try {
             pi.send();
+
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
