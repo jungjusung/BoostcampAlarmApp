@@ -71,7 +71,11 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             } else {
                 mAlarmPmAm.setText(context.getResources().getString(R.string.tv_am));
             }
-            String time = Integer.parseInt(alarm.getAlarm_hour()) % 12 + ":" + Integer.parseInt(alarm.getAlarm_minute());
+            String minite=alarm.getAlarm_minute();
+            if(Integer.parseInt(alarm.getAlarm_minute())<10) {
+                minite = "0"+alarm.getAlarm_minute();
+            }
+            String time = Integer.parseInt(alarm.getAlarm_hour()) % 12 + ":" + minite;
             mAlarmTime.setText(time);
             RealmList<RealmString> iList = alarm.getIterList();
             StringBuffer sb = new StringBuffer();
