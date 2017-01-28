@@ -48,7 +48,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10sp"
                     android:text="@string/tv_time"
-                    android:textSize="26sp" />
+                    android:textSize="22sp" />
             </LinearLayout>
 
             <TextView
