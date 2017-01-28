@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import io.realm.Realm;
+
 /**
  * Created by Jusung on 2017. 1. 27..
  */
@@ -16,6 +18,10 @@ public class AlarmActivityReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         TAG=this.getClass().getName();
         int id=intent.getIntExtra("id",-1);
+        Realm realm=Realm.getDefaultInstance();
+        Alarm alarm=realm.where(Alarm.class).equalTo("alarm_id",id).findFirst();
+        if(!alarm.isAlarm_isDoing())
+            return;
         if(id==-1)
             return;
 

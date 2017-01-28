@@ -270,7 +270,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         realm.beginTransaction();
 
         alarm.setAlarm_id(sequnceNumber);
-        alarm.setAlarm_isDoing(true);
+        alarm.setAlarm_isDoing(false);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             alarm.setAlarm_hour(String.valueOf(mTimePicker.getCurrentHour()));
             alarm.setAlarm_minute(String.valueOf(mTimePicker.getCurrentMinute()));
@@ -284,7 +284,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         alarm.setAlarm_sound_uri(mSoundUri);
         alarm.setAlarm_optional(null);
         alarm.setAlarm_replay(mSwReplay.isChecked());
-
+        alarm.setAlarm_setting_receiver(false);
         realm.insert(alarm);
         realm.commitTransaction();
         startAlarm(alarm.isAlarm_replay(),alarm);
@@ -311,6 +311,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm temp = alarm;
+        temp.setAlarm_isDoing(true);
         temp.setAlarm_setting_receiver(true);
         realm.insertOrUpdate(temp);
         realm.commitTransaction();

@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import io.realm.Realm;
+
 /**
  * Created by Jusung on 2017. 1. 27..
  */
@@ -19,6 +21,10 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
         TAG=this.getClass().getName();
         String uri=intent.getStringExtra("sound_uri");
         int id=intent.getIntExtra("id",-1);
+        Realm realm=Realm.getDefaultInstance();
+        Alarm alarm=realm.where(Alarm.class).equalTo("alarm_id",id).findFirst();
+        if(!alarm.isAlarm_isDoing())
+            return;
         Log.d(TAG,id+"");
         Log.d(TAG,uri+"");
         if(id==-1)

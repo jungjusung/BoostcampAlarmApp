@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,7 +27,7 @@ import io.realm.RealmResults;
  * Created by Jusung on 2017. 1. 22..
  */
 
-public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
 
 
     TextView mAlarmPmAm;
@@ -42,13 +43,10 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
     Context context;
     private AlarmAdapter.ListItemClickListener mOnClickListener;
 
-
-
     public AlarmViewHolder(View itemView, Context context, AlarmAdapter.ListItemClickListener mOnClickListener) {
         super(itemView);
         this.context = context;
         this.mOnClickListener = mOnClickListener;
-        itemView.setOnClickListener(this);
 
         TAG = this.getClass().getName();
         realm = Realm.getDefaultInstance();
@@ -60,6 +58,9 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
         mAlarmImage = (ImageView) itemView.findViewById(R.id.iv_useAlarm);
         mEditImage = (ImageView) itemView.findViewById(R.id.iv_edit_icon);
         mUse = (Switch) itemView.findViewById(R.id.sw_use);
+
+        itemView.setOnClickListener(this);
+        mUse.setOnCheckedChangeListener(this);
     }
 
     void bind(int listIndex, boolean isEditing) {
@@ -99,15 +100,30 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             } else {
                 mEditImage.setVisibility(View.GONE);
             }
-
         }
     }
-
-
-
     @Override
     public void onClick(View view) {
         final int clickedPosition = getAdapterPosition();
         mOnClickListener.onListItemClick(clickedPosition);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        int index=getAdapterPosition();
+        Realm realm=Realm.getDefaultInstance();
+        RealmResults<Alarm> list=realm.where(Alarm.class).findAll();
+        Alarm alarm=list.get(index);
+        if(isChecked){
+            realm.beginTransaction();
+            alarm.setAlarm_isDoing(true);
+            realm.insertOrUpdate(alarm);
+            realm.commitTransaction();
+        }else{
+            realm.beginTransaction();
+            alarm.setAlarm_isDoing(false);
+            realm.insertOrUpdate(alarm);
+            realm.commitTransaction();
+        }
     }
 }

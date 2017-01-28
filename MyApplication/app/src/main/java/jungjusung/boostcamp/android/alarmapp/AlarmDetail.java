@@ -134,13 +134,14 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit_alarm) {
             //디비 저장!!!
-            Toast.makeText(this, "알람수정", Toast.LENGTH_SHORT).show();
+            NotificationManager notificationManager
+                    = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(alarm_id);
             updateAlarmSetRealmDB(alarm.getAlarm_id());
         } else if (item.getItemId() == android.R.id.home) {
             NotificationManager notificationManager
                     = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(alarm_id);
-            //repeatAlarm();
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
@@ -192,7 +193,8 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                 startActivityForResult(intent, REQUEST_OPTIONAL);
                 break;
             case R.id.btn_delete:
-                Toast.makeText(this, "디비 삭제", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "디비 삭제 : "+alarm_id, Toast.LENGTH_SHORT).show();
+
                 deleteAlarmFromRealmDB(alarm_id);
             default:
                 break;
@@ -235,7 +237,6 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     }
 
     public void updateAlarmSetRealmDB(int index) {
-
         final Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm result = realm.where(Alarm.class).equalTo("alarm_id", index).findFirst();
@@ -256,8 +257,8 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         result.setAlarm_setting_receiver(false);
         realm.insert(result);
         realm.commitTransaction();
-
         deleteBroadCast(index);
+        startAlarm(result.isAlarm_replay(),result);
         onBackPressed();
     }
 
@@ -285,6 +286,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         realm.beginTransaction();
         Alarm alarm = realm.where(Alarm.class).equalTo("alarm_id", index).findFirst();
         alarm.setAlarm_setting_receiver(false);
+        alarm.setAlarm_isDoing(false);
         realm.insertOrUpdate(alarm);
         realm.commitTransaction();
 
@@ -317,15 +319,15 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
 
     public void repeatAlarm() {
         if (alarm_repeat&&alarm.isAlarm_isDoing() && alarm.isAlarm_replay() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
             deleteBroadCast(alarm_id);
             Realm realm=Realm.getDefaultInstance();
             realm.beginTransaction();
             Alarm alarm=realm.where(Alarm.class).equalTo("alarm_id",alarm_id).findFirst();
             alarm.setAlarm_setting_receiver(true);
+            alarm.setAlarm_isDoing(true);
             realm.insertOrUpdate(alarm);
             realm.commitTransaction();
-            
+
             Context context = getApplicationContext();
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
@@ -340,6 +342,88 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
 
             alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(c.getTimeInMillis() + 3 * 60 * 1000, notiPendingIntent), notiPendingIntent);
             alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(c.getTimeInMillis() + 3 * 60 * 1000, activityPendingIntent), activityPendingIntent);
+        }
+    }
+    public void startAlarm(boolean isReapeating, Alarm alarm) {
+        boolean settingFlag = alarm.isAlarm_setting_receiver();
+        Log.d(TAG,settingFlag+"");
+        if (settingFlag)
+            return;
+        Log.d(TAG,"그래서안옴");
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Alarm temp = alarm;
+        temp.setAlarm_isDoing(true);
+        temp.setAlarm_setting_receiver(true);
+        realm.insertOrUpdate(temp);
+        realm.commitTransaction();
+        Context context=getApplicationContext();
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent activityIntent = new Intent(context, AlarmActivityReceiver.class);
+        activityIntent.putExtra("id", alarm.getAlarm_id());
+        Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
+        notiIntent.putExtra("sound_uri", alarm.getAlarm_sound_uri());
+        notiIntent.putExtra("id", alarm.getAlarm_id());
+        PendingIntent pendingNotiIntent = PendingIntent.getBroadcast(context, alarm.getAlarm_id(), notiIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingActivityIntent = PendingIntent.getBroadcast(context, alarm.getAlarm_id(), activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Calendar calendar = Calendar.getInstance();
+        boolean findDay = false;
+        int nowDay = calendar.get(Calendar.DAY_OF_WEEK);
+        int diffDay = 0;
+        RealmList<RealmString> days = alarm.getIterList();
+
+        for (int i = nowDay; i <= 7; i++) {
+            for (int j = 0; j < days.size(); j++) {
+                if (mDays[i].equals(days.get(j).getValue())) {
+                    findDay = true;
+                    diffDay = i - nowDay;
+                    break;
+                }
+            }
+            if (findDay)
+                break;
+        }
+        if (!findDay) {
+            for (int i = 1; i <= nowDay; i++) {
+                if (mDays[i].equals(days.get(0).getValue())) {
+                    diffDay = nowDay - i;
+                    break;
+                }
+            }
+        }
+        int addTime = diffDay * 24 * 60 * 60 * 1000;
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(alarm.getAlarm_hour()));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(alarm.getAlarm_minute()));
+        calendar.set(Calendar.SECOND, 0);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            manager.setAlarmClock(new AlarmManager.AlarmClockInfo(calendar.getTimeInMillis() + addTime, pendingNotiIntent), pendingNotiIntent);
+            manager.setAlarmClock(new AlarmManager.AlarmClockInfo(calendar.getTimeInMillis() + addTime, pendingActivityIntent), pendingActivityIntent);
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (!isReapeating) {
+                //반복하지 않음
+                manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingNotiIntent);
+                manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingActivityIntent);
+            } else {
+                //반복함
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingNotiIntent);
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
+            }
+        } else {
+            if (!isReapeating) {
+                //반복하지 않음
+                manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingNotiIntent);
+                manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingActivityIntent);
+            } else {
+                //반복함
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingNotiIntent);
+                manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
+            }
         }
     }
 }

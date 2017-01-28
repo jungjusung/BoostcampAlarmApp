@@ -34,11 +34,12 @@ public class BootReceiver extends BroadcastReceiver {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
         for (Alarm alarm : list) {
-            startAlarm(alarm.isAlarm_replay(), alarm, context);
+            if(alarm.isAlarm_isDoing())
+                startAlarm(alarm.isAlarm_replay(), alarm, context);
         }
     }
     public void startAlarm(boolean isReapeating, Alarm alarm,Context context) {
-        
+
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm temp = alarm;
