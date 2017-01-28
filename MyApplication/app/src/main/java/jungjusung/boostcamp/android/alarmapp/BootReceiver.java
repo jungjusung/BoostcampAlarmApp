@@ -25,15 +25,17 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        //스마트폰 단말기가 재부팅될시, 디비정보를 불러와서 알람의 리시버 정보를 작성해준다.
 
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
         for (Alarm alarm : list) {
-            if(alarm.isAlarm_isDoing())
+            if (alarm.isAlarm_isDoing())
                 startAlarm(alarm.isAlarm_replay(), alarm, context);
         }
     }
-    public void startAlarm(boolean isReapeating, Alarm alarm,Context context) {
+
+    public void startAlarm(boolean isReapeating, Alarm alarm, Context context) {
 
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

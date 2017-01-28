@@ -8,20 +8,13 @@ import io.realm.Realm;
  * Created by Jusung on 2017. 1. 23..
  */
 
-public class RealmInit extends Application{
-    private int REALM_INDEX=0;
+public class RealmInit extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+        //램을 최초의 한번 초기화하고 매니페스트에 name에 등록해서 사용.
         Realm.init(this);
     }
 
-    public int getREALM_INDEX() {
-        return REALM_INDEX;
-    }
-
-    public void setREALM_INDEX(int REALM_INDEX) {
-        this.REALM_INDEX = REALM_INDEX;
-    }
 }

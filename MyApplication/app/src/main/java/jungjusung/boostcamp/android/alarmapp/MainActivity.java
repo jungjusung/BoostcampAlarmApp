@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -20,12 +18,12 @@ public class MainActivity extends AppCompatActivity implements AlarmAdapter.List
     private RecyclerView mAlarmList;
     private AlarmAdapter alarmAdapter;
     private boolean isEditing = false;
-    String TAG;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TAG = this.getClass().getName();
+
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         mAlarmList = (RecyclerView) findViewById(R.id.rv_alarmlist);
@@ -78,20 +76,18 @@ public class MainActivity extends AppCompatActivity implements AlarmAdapter.List
         RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
         alarmAdapter.setItem(list.size());
         alarmAdapter.notifyDataSetChanged();
-        Log.d(TAG, list.size() + " onResume");
     }
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
         if (isEditing) {
             Realm realm = Realm.getDefaultInstance();
-            RealmResults<Alarm> alarmList=realm.where(Alarm.class).findAll();
-            Alarm alarm=alarmList.get(clickedItemIndex);
+            RealmResults<Alarm> alarmList = realm.where(Alarm.class).findAll();
+            Alarm alarm = alarmList.get(clickedItemIndex);
             Context context = this.getApplicationContext();
 
-            Toast.makeText(context, "id : " + alarm.getAlarm_id() + " 현재 시간 : " + alarm.getAlarm_hour() + " : " + alarm.getAlarm_minute() + "", Toast.LENGTH_SHORT).show();
-            Intent detailIntent=new Intent(context,AlarmDetail.class);
-            detailIntent.putExtra("alarm_id",alarm.getAlarm_id());
+            Intent detailIntent = new Intent(context, AlarmDetail.class);
+            detailIntent.putExtra("alarm_id", alarm.getAlarm_id());
             startActivity(detailIntent);
         }
     }

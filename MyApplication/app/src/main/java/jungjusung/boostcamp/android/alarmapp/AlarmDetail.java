@@ -40,7 +40,6 @@ import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 /**
  * Created by Jusung on 2017. 1. 27..
@@ -50,39 +49,34 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
 
     private static final int REQUEST_SOUND = 1;
     private static final int REQUEST_ITERATION = 2;
-    Animation mFadeIn, mFadeOut;
-    Resources system;
+    private Animation mFadeIn, mFadeOut;
+    private Resources system;
 
-    LinearLayout mSound;
-    LinearLayout mIteration;
-    LinearLayout mReplay;
-    LinearLayout mOptional;
-    TimePicker mTimePicker;
-    EditText mEditMemo;
-    TextView mTextSound, mTextIteration,mNowLocation;
-    Switch mSwReplay;
-    Button mDeleteAlarm;
-    ArrayList<String> rList;
-    RealmList<RealmString> iList;
-    RealmList<RealmString> tempList;
-    String mSoundName;
-    String mSoundUri;
-    LinearLayout mLayout;
-    Alarm alarm = null;
-    String TAG;
-    int alarm_id;
-    boolean alarm_repeat;
+    private LinearLayout mSound, mIteration, mReplay, mOptional, mLayout;
+    private TimePicker mTimePicker;
+    private EditText mEditMemo;
+    private TextView mTextSound, mTextIteration, mNowLocation;
+    private Switch mSwReplay;
+    private Button mDeleteAlarm;
+    private ArrayList<String> rList;
+    private RealmList<RealmString> iList;
+    private RealmList<RealmString> tempList;
+    private String mSoundName, mSoundUri;
+
+    private Alarm alarm = null;
+    private int alarm_id;
+    private boolean alarm_repeat;
     private String[] mDays = new String[]{"", "일", "월", "화", "수", "목", "금", "토"};
-    GpsInfo gps;
+    private GpsInfo gps;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        TAG = this.getClass().getName();
+
         Intent intent = getIntent();
         alarm_id = intent.getIntExtra("alarm_id", -1);
-        alarm_repeat=intent.getBooleanExtra("alarm_repeat",false);
+        alarm_repeat = intent.getBooleanExtra("alarm_repeat", false);
         Realm realm = Realm.getDefaultInstance();
         if (alarm_id != -1) {
             alarm = realm.where(Alarm.class).equalTo("alarm_id", alarm_id).findFirst();
@@ -98,10 +92,17 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         mEditMemo = (EditText) findViewById(R.id.et_memo);
         mTextSound = (TextView) findViewById(R.id.tv_sound);
         mTextIteration = (TextView) findViewById(R.id.tv_iteration);
-        mNowLocation=(TextView)findViewById(R.id.tv_now_location);
+        mNowLocation = (TextView) findViewById(R.id.tv_now_location);
         mSwReplay = (Switch) findViewById(R.id.sw_replay);
         mDeleteAlarm = (Button) findViewById(R.id.btn_delete);
+
+        //도즈모드에서도 작동하기 위해서 해당 액티비티에서 스위치를 끄지 않는다면 3분 동안 간격으로 반복해준다.
+        //3분은 임의로 정한 시간
         repeatAlarm();
+
+        //타임피커 색 변환
+        set_timepicker_text_colour();
+
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             mTimePicker.setCurrentHour(Integer.parseInt(alarm.getAlarm_hour()));
@@ -124,7 +125,9 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         mSwReplay.setChecked(alarm.isAlarm_replay());
 
         gps = new GpsInfo(AlarmDetail.this);
-        String nowLocation=findLocation(gps);
+
+        //현재 위도, 경도 값으로, 지역명을 가져온다.
+        String nowLocation = findLocation(gps);
         mNowLocation.setText(nowLocation);
 
         mSound.setOnClickListener(this);
@@ -145,11 +148,16 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit_alarm) {
             //디비 저장!!!
+            //노티 제거
             NotificationManager notificationManager
                     = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(alarm_id);
+
+            //알람 업데이트
             updateAlarmSetRealmDB(alarm.getAlarm_id());
+
         } else if (item.getItemId() == android.R.id.home) {
+            //노티 제거
             NotificationManager notificationManager
                     = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(alarm_id);
@@ -195,7 +203,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                 view.startAnimation(mFadeIn);
                 break;
             case R.id.btn_delete:
-                Toast.makeText(this, "디비 삭제 : "+alarm_id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "디비 삭제 : " + alarm_id, Toast.LENGTH_SHORT).show();
 
                 deleteAlarmFromRealmDB(alarm_id);
             default:
@@ -221,7 +229,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
                 rList = rBundle.getStringArrayList("iteration_list");
                 StringBuffer sb = new StringBuffer();
                 tempList = new RealmList<>();
-
+                //반복 액티비티에서 결과 넘어옴
                 for (String item : rList) {
                     sb.append(item + " ");
                     RealmString realmStr = realm.createObject(RealmString.class);
@@ -235,6 +243,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     }
 
     public void updateAlarmSetRealmDB(int index) {
+        //디비 정보 업데이트
         final Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm result = realm.where(Alarm.class).equalTo("alarm_id", index).findFirst();
@@ -256,7 +265,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         realm.insert(result);
         realm.commitTransaction();
         deleteBroadCast(index);
-        startAlarm(result.isAlarm_replay(),result);
+        startAlarm(result.isAlarm_replay(), result);
         onBackPressed();
     }
 
@@ -272,6 +281,8 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     }
 
     public void deleteBroadCast(int index) {
+
+        //리시버 제거 로직
         Context context = this.getApplicationContext();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent notiIntent = new Intent(context, AlarmNotificationReceiver.class);
@@ -305,6 +316,8 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        //화면을 터치하면 알람 소리가 멈추게 한다.
+        //노티제거
         if (view.getId() == R.id.ll_detail) {
             NotificationManager notificationManager
                     = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -316,11 +329,13 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     }
 
     public void repeatAlarm() {
-        if (alarm_repeat&&alarm.isAlarm_isDoing() && alarm.isAlarm_replay() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+        //도즈모드에서도 반복하기 위한 로직
+        if (alarm_repeat && alarm.isAlarm_isDoing() && alarm.isAlarm_replay() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             deleteBroadCast(alarm_id);
-            Realm realm=Realm.getDefaultInstance();
+            Realm realm = Realm.getDefaultInstance();
             realm.beginTransaction();
-            Alarm alarm=realm.where(Alarm.class).equalTo("alarm_id",alarm_id).findFirst();
+            Alarm alarm = realm.where(Alarm.class).equalTo("alarm_id", alarm_id).findFirst();
             alarm.setAlarm_setting_receiver(true);
             alarm.setAlarm_isDoing(true);
             realm.insertOrUpdate(alarm);
@@ -342,6 +357,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(c.getTimeInMillis() + 3 * 60 * 1000, activityPendingIntent), activityPendingIntent);
         }
     }
+
     public void startAlarm(boolean isReapeating, Alarm alarm) {
         boolean settingFlag = alarm.isAlarm_setting_receiver();
         if (settingFlag)
@@ -353,7 +369,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         temp.setAlarm_setting_receiver(true);
         realm.insertOrUpdate(temp);
         realm.commitTransaction();
-        Context context=getApplicationContext();
+        Context context = getApplicationContext();
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent activityIntent = new Intent(context, AlarmActivityReceiver.class);
         activityIntent.putExtra("id", alarm.getAlarm_id());
@@ -370,6 +386,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         int diffDay = 0;
         RealmList<RealmString> days = alarm.getIterList();
 
+        //해당 요일과 같거나, 가장 가까운 요일을 찾아서 현재시간에 해당 시간만큼 더해준다.
         for (int i = nowDay; i <= 7; i++) {
             for (int j = 0; j < days.size(); j++) {
                 if (mDays[i].equals(days.get(j).getValue())) {
@@ -390,6 +407,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             }
         }
         int addTime = diffDay * 24 * 60 * 60 * 1000;
+
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(alarm.getAlarm_hour()));
         calendar.set(Calendar.MINUTE, Integer.parseInt(alarm.getAlarm_minute()));
         calendar.set(Calendar.SECOND, 0);
@@ -422,12 +440,15 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             }
         }
     }
-    public String findLocation(GpsInfo gps){
-        String nowAddress =getResources().getString(R.string.not_find_location);
+
+    public String findLocation(GpsInfo gps) {
+
+        //네트워크,GPS 사용할수 없을 시 디폴트 스트링 출력
+        String nowAddress = getResources().getString(R.string.not_find_location);
         if (gps.isGetLocation()) {
 
         }
-        Context context=this.getApplicationContext();
+        Context context = this.getApplicationContext();
         double latitude = gps.getLatitude();
         double longitude = gps.getLongitude();
 
@@ -441,8 +462,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
 
                 if (address != null && address.size() > 0) {
                     String currentLocationAddress = address.get(0).getAddressLine(0);
-                    Log.d(TAG,currentLocationAddress);
-                    nowAddress  = currentLocationAddress;
+                    nowAddress = currentLocationAddress;
                 }
             }
         } catch (IOException e) {
@@ -450,6 +470,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
         }
         return nowAddress;
     }
+
     private void set_numberpicker_text_colour(NumberPicker number_picker) {
         final int count = number_picker.getChildCount();
         final NumberPicker c = number_picker;

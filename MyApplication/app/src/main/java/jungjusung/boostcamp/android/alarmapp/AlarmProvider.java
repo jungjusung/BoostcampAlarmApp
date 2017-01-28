@@ -18,32 +18,38 @@ import io.realm.RealmResults;
 
 public class AlarmProvider extends ContentProvider {
 
-    static final Uri CONTENT_URI = Uri.parse("content://jungjusung.boostcamp.android.alarmapp/data");
-    Realm realm;
-    static final String[] sColumns = new String[]{"alarm_id", "alarm_hour", "alarm_minute","alarm_memo","alarm_sound_name"};
-    RealmQuery<Alarm> query;
-    RealmResults<Alarm> results;
-    MatrixCursor cursor;
+    private RealmQuery<Alarm> query;
+    private RealmResults<Alarm> results;
+    private MatrixCursor cursor;
+    private Realm realm;
 
+    static final Uri CONTENT_URI = Uri.parse("content://jungjusung.boostcamp.android.alarmapp/data");
+    static final String[] sColumns = new String[]{"alarm_id", "alarm_hour", "alarm_minute", "alarm_memo", "alarm_sound_name"};
 
     static UriMatcher Matcher;
 
     static {
         Matcher = new UriMatcher(UriMatcher.NO_MATCH);
     }
+
     @Override
     public boolean onCreate() {
         return true;
     }
+
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        // 타 앱에서 콘텐트 프로바이더를 통한 디비 정보를 접근할 수 있게 해준다.
+        // Realm은 커서가 없기 때문에 매트릭스를 커서로 이용해 작성한다.
+
         realm = Realm.getDefaultInstance();
         query = realm.where(Alarm.class);
         results = query.findAll();
         cursor = new MatrixCursor(sColumns);
         for (Alarm alarm : results) {
-            Object[] rowData = new Object[]{alarm.getAlarm_id(),alarm.getAlarm_hour(),alarm.getAlarm_minute(),alarm.getAlarm_memo(),alarm.getAlarm_sound_name()};
+            //해당정보들을 넘겨준다.
+            Object[] rowData = new Object[]{alarm.getAlarm_id(), alarm.getAlarm_hour(), alarm.getAlarm_minute(), alarm.getAlarm_memo(), alarm.getAlarm_sound_name()};
             cursor.addRow(rowData);
         }
         return cursor;

@@ -1,7 +1,5 @@
 package jungjusung.boostcamp.android.alarmapp;
 
-import java.io.Serializable;
-import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -11,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by Jusung on 2017. 1. 23..
  */
 
-public class Alarm extends RealmObject{
+public class Alarm extends RealmObject {
 
     @PrimaryKey
     private int alarm_id;
@@ -22,7 +20,6 @@ public class Alarm extends RealmObject{
     private String alarm_memo;
     private String alarm_sound_name;
     private String alarm_sound_uri;
-    private String alarm_optional;
     private boolean alarm_replay;
     private boolean alarm_setting_receiver;
 
@@ -88,14 +85,6 @@ public class Alarm extends RealmObject{
 
     public void setAlarm_sound_uri(String alarm_sound_uri) {
         this.alarm_sound_uri = alarm_sound_uri;
-    }
-
-    public String getAlarm_optional() {
-        return alarm_optional;
-    }
-
-    public void setAlarm_optional(String alarm_optional) {
-        this.alarm_optional = alarm_optional;
     }
 
     public boolean isAlarm_replay() {

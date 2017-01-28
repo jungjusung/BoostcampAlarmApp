@@ -1,36 +1,25 @@
 package jungjusung.boostcamp.android.alarmapp;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.TransitionDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -41,7 +30,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -198,7 +186,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
 
     private void set_numberpicker_text_colour(NumberPicker number_picker) {
         final int count = number_picker.getChildCount();
-        final NumberPicker c = number_picker;
         for (int i = 0; i < count; i++) {
             final View child = number_picker.getChildAt(i);
 
@@ -232,9 +219,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void insertIntoRealmDB() {
-
-        RealmResults<Alarm> result=realm.where(Alarm.class).findAll();
-        RealmInit init = (RealmInit)getApplication();
         int sequnceNumber=0;
         try {
             if(realm.where(Alarm.class).findAll().size()>0)
@@ -258,7 +242,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         alarm.setAlarm_memo(mEditMemo.getText().toString());
         alarm.setAlarm_sound_name(mSoundName);
         alarm.setAlarm_sound_uri(mSoundUri);
-        alarm.setAlarm_optional(null);
         alarm.setAlarm_replay(mSwReplay.isChecked());
         alarm.setAlarm_setting_receiver(false);
         realm.insert(alarm);
@@ -271,7 +254,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                RealmResults<Alarm> result=realm.where(Alarm.class).findAll();
                 onBackPressed();
             }
         });
@@ -279,10 +261,10 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     }
     public void startAlarm(boolean isReapeating, Alarm alarm) {
         boolean settingFlag = alarm.isAlarm_setting_receiver();
-        Log.d(TAG,settingFlag+"");
+        //이미 리시버 등록되어 있으면 반환!
         if (settingFlag)
             return;
-        Log.d(TAG,"그래서안옴");
+
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm temp = alarm;

@@ -1,15 +1,9 @@
 package jungjusung.boostcamp.android.alarmapp;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+
 import android.content.Context;
-import android.content.Intent;
-import android.opengl.Visibility;
-import android.os.Build;
-import android.os.SystemClock;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,10 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Calendar;
-import java.util.Random;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -31,30 +21,26 @@ import io.realm.RealmResults;
  * Created by Jusung on 2017. 1. 22..
  */
 
-public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,CompoundButton.OnCheckedChangeListener {
+public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
 
-    TextView mAlarmPmAm;
-    TextView mAlarmTime;
-    TextView mAlarmDay;
-    TextView mAlarmMemo;
-    TextView mAlarmSoundName;
-    Switch mUse;
-    ImageView mAlarmImage;
-    ImageView mEditImage;
-    LinearLayout mItemLayout,mAlarmIconLayout;
+    private TextView mAlarmPmAm, mAlarmTime, mAlarmDay, mAlarmMemo, mAlarmSoundName;
+    private Switch mUse;
+    private ImageView mAlarmImage, mEditImage;
+    private LinearLayout mItemLayout, mAlarmIconLayout;
     private Realm realm;
-    String TAG;
-    Animation mFadeIn, mFadeOut;
-    Context context;
+    private Animation mFadeIn, mFadeOut;
     private AlarmAdapter.ListItemClickListener mOnClickListener;
+
+    Context context;
+
 
     public AlarmViewHolder(View itemView, Context context, AlarmAdapter.ListItemClickListener mOnClickListener) {
         super(itemView);
         this.context = context;
         this.mOnClickListener = mOnClickListener;
 
-        TAG = this.getClass().getName();
+
         realm = Realm.getDefaultInstance();
         mAlarmPmAm = (TextView) itemView.findViewById(R.id.tv_am_pm);
         mAlarmTime = (TextView) itemView.findViewById(R.id.tv_time);
@@ -64,13 +50,14 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
         mAlarmImage = (ImageView) itemView.findViewById(R.id.iv_useAlarm);
         mEditImage = (ImageView) itemView.findViewById(R.id.iv_edit_icon);
         mUse = (Switch) itemView.findViewById(R.id.sw_use);
-        mItemLayout=(LinearLayout)itemView.findViewById(R.id.ll_item_detail);
-        mAlarmIconLayout=(LinearLayout)itemView.findViewById(R.id.ll_alarm_icon);
+        mItemLayout = (LinearLayout) itemView.findViewById(R.id.ll_item_detail);
+        mAlarmIconLayout = (LinearLayout) itemView.findViewById(R.id.ll_alarm_icon);
         itemView.setOnClickListener(this);
         mUse.setOnCheckedChangeListener(this);
     }
 
     void bind(int listIndex, boolean isEditing) {
+        //디비의 인덱스와 리스트의 인덱스를 매칭하여 리스트에 호출한다.
         RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
         if (list.size() > 0) {
             Alarm alarm = list.get(listIndex);
@@ -79,9 +66,9 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             } else {
                 mAlarmPmAm.setText(context.getResources().getString(R.string.tv_am));
             }
-            String minite=alarm.getAlarm_minute();
-            if(Integer.parseInt(alarm.getAlarm_minute())<10) {
-                minite = "0"+alarm.getAlarm_minute();
+            String minite = alarm.getAlarm_minute();
+            if (Integer.parseInt(alarm.getAlarm_minute()) < 10) {
+                minite = "0" + alarm.getAlarm_minute();
             }
             String time = Integer.parseInt(alarm.getAlarm_hour()) % 12 + ":" + minite;
             mAlarmTime.setText(time);
@@ -102,6 +89,8 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             }
             mAlarmSoundName.setText(alarm.getAlarm_sound_name());
             mAlarmMemo.setText(alarm.getAlarm_memo());
+
+            // 수정 버튼을 눌렀을 시 리스트의 아이템이 변경 된다.
             if (isEditing) {
                 mFadeOut = AnimationUtils.loadAnimation(context, R.anim.fadeout);
                 mFadeIn = AnimationUtils.loadAnimation(context, R.anim.fadein);
@@ -121,6 +110,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             }
         }
     }
+
     @Override
     public void onClick(View view) {
         final int clickedPosition = getAdapterPosition();
@@ -129,17 +119,18 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        int index=getAdapterPosition();
-        Realm realm=Realm.getDefaultInstance();
-        RealmResults<Alarm> list=realm.where(Alarm.class).findAll();
-        Alarm alarm=list.get(index);
-        if(isChecked){
+        int index = getAdapterPosition();
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
+        Alarm alarm = list.get(index);
+        //버튼 변경시 변경되는 로직 작성
+        if (isChecked) {
             mAlarmImage.setBackgroundResource(R.drawable.ic_alarm_on);
             realm.beginTransaction();
             alarm.setAlarm_isDoing(true);
             realm.insertOrUpdate(alarm);
             realm.commitTransaction();
-        }else{
+        } else {
             mAlarmImage.setBackgroundResource(R.drawable.ic_alarm_off);
             realm.beginTransaction();
             alarm.setAlarm_isDoing(false);

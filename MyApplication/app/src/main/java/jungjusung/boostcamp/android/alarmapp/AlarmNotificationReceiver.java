@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 
 import io.realm.Realm;
 
@@ -15,19 +14,18 @@ import io.realm.Realm;
  * Created by Jusung on 2017. 1. 27..
  */
 public class AlarmNotificationReceiver extends BroadcastReceiver {
-    String TAG;
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        TAG=this.getClass().getName();
-        String uri=intent.getStringExtra("sound_uri");
-        int id=intent.getIntExtra("id",-1);
-        Realm realm=Realm.getDefaultInstance();
-        Alarm alarm=realm.where(Alarm.class).equalTo("alarm_id",id).findFirst();
-        if(!alarm.isAlarm_isDoing())
+        //노티와 사운드를 전해주는 리시버
+        String uri = intent.getStringExtra("sound_uri");
+        int id = intent.getIntExtra("id", -1);
+        Realm realm = Realm.getDefaultInstance();
+        Alarm alarm = realm.where(Alarm.class).equalTo("alarm_id", id).findFirst();
+        //알람이 off면 작동안한다.
+        if (!alarm.isAlarm_isDoing())
             return;
-        Log.d(TAG,id+"");
-        Log.d(TAG,uri+"");
-        if(id==-1)
+        if (id == -1)
             return;
         PushWakeLock.acquireCpuWakeLock(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -38,15 +36,13 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_alarm_noti)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(context.getString(R.string.notification_content))
-                .setDefaults(Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE)
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                 .setSound(Uri.parse(uri))
                 .setContentInfo("Info");
-        Notification noti=builder.build();
-        noti.flags=Notification.FLAG_NO_CLEAR;
+
         NotificationManager notificationManager
                 = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(id,noti);
-
+        notificationManager.notify(id, builder.build());
         PushWakeLock.releaseCpuLock();
     }
 }

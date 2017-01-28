@@ -3,7 +3,6 @@ package jungjusung.boostcamp.android.alarmapp;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.PowerManager;
-import android.util.Log;
 
 /**
  * Created by Jusung on 2017. 1. 26..
@@ -15,6 +14,7 @@ public class PushWakeLock {
     private static boolean isScreenLock;
 
     static void acquireCpuWakeLock(Context context) {
+        //화면이 off 상태일때 깨워준다.
         if (sCpuWakeLock != null) {
             return;
         }
