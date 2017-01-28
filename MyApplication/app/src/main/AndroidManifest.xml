@@ -61,7 +61,8 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
-            </activity>
+
+        </activity>
         <receiver android:name=".AlarmActivityReceiver"/>
         <receiver android:name=".AlarmNotificationReceiver"/>
         <receiver android:name=".BootReceiver">
