@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements AlarmAdapter.List
 
     private RecyclerView mAlarmList;
     private AlarmAdapter alarmAdapter;
+    private LinearLayout mNotDataLayout;
     private boolean isEditing = false;
 
 
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements AlarmAdapter.List
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         mAlarmList = (RecyclerView) findViewById(R.id.rv_alarmlist);
+        mNotDataLayout=(LinearLayout)findViewById(R.id.ll_not_data);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAlarmList.setLayoutManager(layoutManager);
         mAlarmList.setHasFixedSize(true);
@@ -74,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements AlarmAdapter.List
         super.onResume();
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
+        if(list.size()>0){
+            mNotDataLayout.setVisibility(View.GONE);
+        }else{
+            mNotDataLayout.setVisibility(View.VISIBLE);
+        }
         alarmAdapter.setItem(list.size());
         alarmAdapter.notifyDataSetChanged();
     }

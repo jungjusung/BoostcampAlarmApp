@@ -43,4 +43,6 @@
     <string name="not_find_location">현재 위치를 불러 올 수 없습니다.</string>
     <string name="tv_not_iteration">설정되지않음</string>
     <string name="tv_none_sound">없음</string>
+    <string name="tv_not_data">알람 정보가 없습니다.</string>
+    <string name="tv_request_alaram">새로운 알람을 등록해주세요.</string>
 </resources>
