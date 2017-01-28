@@ -71,6 +71,11 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
+        <provider
+            android:name=".AlarmProvider"
+            android:authorities="jungjusung.boostcamp.android.alarmapp"
+            android:exported="true"
+            />
     </application>
 
 </manifest>
