@@ -17,7 +17,7 @@
     <string name="tv_iteration">반복</string>
     <string name="tv_replay">다시 알림</string>
     <string name="tv_iter">월 화 수 목 금</string>
-    <string name="tv_optional">추가 기능</string>
+    <string name="tv_optional">현재 위치</string>
     <string name="action_sound">사운드 설정</string>
     <string name="action_optional">추가 기능 설정</string>
     <string name="action_iteration">반복 설정</string>
@@ -40,4 +40,5 @@
     <string name="action_detail">알람 정보</string>
     <string name="action_edit">Edit</string>
     <string name="btn_delete_alaram">알람 삭제</string>
+    <string name="not_find_location">현재 위치를 불러 올 수 없습니다.</string>
 </resources>

@@ -12,6 +12,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.TransitionDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -37,10 +39,13 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -56,7 +61,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
 
     private static final int REQUEST_SOUND = 1;
     private static final int REQUEST_ITERATION = 2;
-    private static final int REQUEST_OPTIONAL = 3;
 
     LinearLayout mSound;
     LinearLayout mIteration;
@@ -69,7 +73,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
 
 
     EditText mEditMemo;
-    TextView mTextSound, mTextIteration;
+    TextView mTextSound, mTextIteration,mNowLocation;
     Switch mSwReplay;
     ArrayList<String> rList;
     RealmList<RealmString> iList = new RealmList<>();
@@ -77,6 +81,8 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     String mSoundName;
     String mSoundUri;
     String[] mDays = new String[]{"", "일", "월", "화", "수", "목", "금", "토"};
+    GpsInfo gps;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +99,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         mEditMemo = (EditText) findViewById(R.id.et_memo);
         mTextSound = (TextView) findViewById(R.id.tv_sound);
         mTextIteration = (TextView) findViewById(R.id.tv_iteration);
+        mNowLocation=(TextView)findViewById(R.id.tv_now_location);
         mSwReplay = (Switch) findViewById(R.id.sw_replay);
 
         mSound.setOnClickListener(this);
@@ -102,8 +109,9 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         mSwReplay.setOnCheckedChangeListener(this);
         mTimePicker.setOnTimeChangedListener(this);
 
-        set_timepicker_text_colour();
-
+        gps = new GpsInfo(AddAlarmActivity.this);
+        String nowLocation=findLocation(gps);
+        mNowLocation.setText(nowLocation);
     }
 
     @Override
@@ -158,15 +166,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
                 view.startAnimation(mFadeOut);
                 view.startAnimation(mFadeIn);
                 break;
-            case R.id.ll_optional:
-                Toast.makeText(this, "추가 기능 클릭", Toast.LENGTH_SHORT).show();
-                mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
-                mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
-                view.startAnimation(mFadeOut);
-                view.startAnimation(mFadeIn);
-                intent = new Intent(getApplicationContext(), OptionalActivity.class);
-                startActivityForResult(intent, REQUEST_OPTIONAL);
-                break;
             default:
                 break;
         }
@@ -196,12 +195,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
                 mTextIteration.setText(sb.toString());
 
             }
-        } else if (requestCode == REQUEST_OPTIONAL && data != null) {
-            if (resultCode == Activity.RESULT_OK) {
-                // 추가 액티비티에서 결과 넘어옴
-            }
         }
-
     }
 
     private void set_numberpicker_text_colour(NumberPicker number_picker) {
@@ -383,5 +377,33 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
                 manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
             }
         }
+    }
+    public String findLocation(GpsInfo gps){
+        String nowAddress =getResources().getString(R.string.not_find_location);
+        if (gps.isGetLocation()) {
+
+        }
+            Context context=this.getApplicationContext();
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+
+            Geocoder geocoder = new Geocoder(context, Locale.KOREA);
+            List<Address> address;
+        try {
+            if (geocoder != null) {
+
+                address = geocoder.getFromLocation(latitude, longitude, 1);
+                //세번째 파라미터는 좌표에 대해 주소를 리턴 갯수로 하나만 표시
+
+                if (address != null && address.size() > 0) {
+                    String currentLocationAddress = address.get(0).getAddressLine(0);
+                    Log.d(TAG,currentLocationAddress);
+                    nowAddress  = currentLocationAddress;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return nowAddress;
     }
 }

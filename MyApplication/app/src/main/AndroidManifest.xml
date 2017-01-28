@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
+    //위치 가져오기 위한 권한
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".RealmInit"
         android:allowBackup="true"
@@ -41,14 +47,6 @@
         <activity
             android:name=".SoundActivity"
             android:label="@string/action_sound"
-            android:parentActivityName=".AddAlarmActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AddAlarmActivity"/>
-        </activity>
-        <activity
-            android:name=".OptionalActivity"
-            android:label="@string/action_optional"
             android:parentActivityName=".AddAlarmActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
