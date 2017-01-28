@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.opengl.Visibility;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
     Switch mUse;
     ImageView mAlarmImage;
     ImageView mEditImage;
+    LinearLayout mItemLayout;
     private Realm realm;
     String TAG;
     Context context;
@@ -58,7 +61,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
         mAlarmImage = (ImageView) itemView.findViewById(R.id.iv_useAlarm);
         mEditImage = (ImageView) itemView.findViewById(R.id.iv_edit_icon);
         mUse = (Switch) itemView.findViewById(R.id.sw_use);
-
+        mItemLayout=(LinearLayout)itemView.findViewById(R.id.ll_item_detail);
         itemView.setOnClickListener(this);
         mUse.setOnCheckedChangeListener(this);
     }
@@ -97,8 +100,10 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             mAlarmMemo.setText(alarm.getAlarm_memo());
             if (isEditing) {
                 mEditImage.setVisibility(View.VISIBLE);
+                mItemLayout.setVisibility(View.GONE);
             } else {
                 mEditImage.setVisibility(View.GONE);
+                mItemLayout.setVisibility(View.VISIBLE);
             }
         }
     }
