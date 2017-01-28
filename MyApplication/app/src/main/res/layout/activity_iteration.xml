@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_sunday"
             android:textSize="16sp" />
@@ -56,7 +56,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_monday"
             android:textSize="16sp" />
@@ -86,7 +86,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_tuesday"
             android:textSize="16sp" />
@@ -117,7 +117,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_wednesday"
             android:textSize="16sp" />
@@ -147,7 +147,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_thursday"
             android:textSize="16sp" />
@@ -177,7 +177,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_friday"
             android:textSize="16sp" />
@@ -208,7 +208,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="center_vertical"
             android:text="@string/tv_saturday"
             android:textSize="16sp" />

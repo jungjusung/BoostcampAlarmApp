@@ -87,7 +87,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2.5"
                 android:gravity="center_vertical|end"
-                android:hint="@string/tv_seleted_sound"
+                android:text="@string/tv_none_sound"
                 android:textSize="14sp" />
 
             <TextView
@@ -112,14 +112,13 @@
                 android:text="@string/tv_iteration"
                 android:textSize="14sp" />
 
-
             <TextView
                 android:id="@+id/tv_iteration"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2.5"
                 android:gravity="center_vertical|end"
-                android:hint="@string/tv_iter"
+                android:hint="@string/tv_not_iteration"
                 android:textSize="14sp" />
 
             <TextView

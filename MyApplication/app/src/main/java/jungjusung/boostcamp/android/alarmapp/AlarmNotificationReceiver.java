@@ -40,7 +40,6 @@ public class AlarmNotificationReceiver extends BroadcastReceiver {
                 .setContentText(context.getString(R.string.notification_content))
                 .setDefaults(Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE)
                 .setSound(Uri.parse(uri))
-                .setOngoing(true)
                 .setContentInfo("Info");
         Notification noti=builder.build();
         noti.flags=Notification.FLAG_NO_CLEAR;

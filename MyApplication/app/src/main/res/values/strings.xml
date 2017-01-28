@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AlarmApp</string>
+    <string name="app_name">알람</string>
     <string name="tv_am">AM</string>
     <string name="tv_pm">PM</string>
     <string name="tv_time">6:40</string>
@@ -8,7 +8,7 @@
     <string name="tv_day">월 화 수 목 금 토 일</string>
     <string name="tv_memo">memo</string>
     <string name="action_setting">Setting</string>
-    <string name="action_add_alarm">AddAlarm</string>
+    <string name="action_add_alarm">알람 추가</string>
     <string name="action_save">save</string>
     <string name="tv_add_memo">메모</string>
     <string name="ed_add_memo">알림 메세지를 입력</string>
@@ -41,4 +41,6 @@
     <string name="action_edit">Edit</string>
     <string name="btn_delete_alaram">알람 삭제</string>
     <string name="not_find_location">현재 위치를 불러 올 수 없습니다.</string>
+    <string name="tv_not_iteration">설정되지않음</string>
+    <string name="tv_none_sound">없음</string>
 </resources>

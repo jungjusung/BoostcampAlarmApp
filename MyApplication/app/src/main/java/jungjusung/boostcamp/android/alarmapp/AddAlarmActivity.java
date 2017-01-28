@@ -55,8 +55,7 @@ import io.realm.RealmResults;
  * Created by Jusung on 2017. 1. 23..
  */
 
-public class AddAlarmActivity extends AppCompatActivity implements View.OnClickListener
-        , CompoundButton.OnCheckedChangeListener, TimePicker.OnTimeChangedListener {
+public class AddAlarmActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private static final int REQUEST_SOUND = 1;
@@ -106,9 +105,8 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         mIteration.setOnClickListener(this);
         mReplay.setOnClickListener(this);
         mOptional.setOnClickListener(this);
-        mSwReplay.setOnCheckedChangeListener(this);
-        mTimePicker.setOnTimeChangedListener(this);
 
+        set_timepicker_text_colour();
         gps = new GpsInfo(AddAlarmActivity.this);
         String nowLocation=findLocation(gps);
         mNowLocation.setText(nowLocation);
@@ -128,8 +126,10 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_save_alarm) {
-            //디비 저장!!!
-            insertIntoRealmDB();
+            if(mTextIteration.getText().toString().equals("")){
+                Toast.makeText(getApplicationContext(),"요일 반복을 설정해주세요.", Toast.LENGTH_SHORT).show();
+            }else
+                insertIntoRealmDB();
         } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
@@ -142,7 +142,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         Intent intent = null;
         switch (clickedView) {
             case R.id.ll_sound:
-                Toast.makeText(this, "사운드 변경 클릭", Toast.LENGTH_SHORT).show();
                 mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
                 mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
@@ -151,7 +150,7 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
                 startActivityForResult(intent, REQUEST_SOUND);
                 break;
             case R.id.ll_iteration:
-                Toast.makeText(this, "반복 변경 클릭", Toast.LENGTH_SHORT).show();
+
                 mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
                 mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
@@ -160,7 +159,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
                 startActivityForResult(intent, REQUEST_ITERATION);
                 break;
             case R.id.ll_replay:
-                Toast.makeText(this, "다시 알림 클릭", Toast.LENGTH_SHORT).show();
                 mFadeOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadeout);
                 mFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fadein);
                 view.startAnimation(mFadeOut);
@@ -210,7 +208,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
                 int selectedColor = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark);
                 ((Paint) wheelpaint_field.get(number_picker)).setColor(selectedColor);
                 ((EditText) child).setTextColor(selectedColor);
-                ((EditText) child).setTextSize(20);
                 number_picker.invalidate();
             } catch (NoSuchFieldException e) {
             } catch (IllegalAccessException e) {
@@ -234,24 +231,9 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
         set_numberpicker_text_colour(ampm_numberpicker);
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecking) {
-        if (isChecking) {
-            Toast.makeText(this, "True", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "False", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onTimeChanged(TimePicker timePicker, int hour, int minute) {
-        Toast.makeText(this, hour + ":" + minute, Toast.LENGTH_SHORT).show();
-    }
-
     public void insertIntoRealmDB() {
 
         RealmResults<Alarm> result=realm.where(Alarm.class).findAll();
-        Toast.makeText(this, "DB 갯수 : "+result.size(), Toast.LENGTH_SHORT).show();
         RealmInit init = (RealmInit)getApplication();
         int sequnceNumber=0;
         try {
@@ -290,7 +272,6 @@ public class AddAlarmActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onSuccess() {
                 RealmResults<Alarm> result=realm.where(Alarm.class).findAll();
-                Toast.makeText(AddAlarmActivity.this, "성공 : "+result.size(), Toast.LENGTH_SHORT).show();
                 onBackPressed();
             }
         });

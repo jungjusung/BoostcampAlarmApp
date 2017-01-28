@@ -12,14 +12,14 @@
         android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingLeft="16sp"
+        android:paddingTop="16sp"
+        android:paddingBottom="16sp"
         >
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="2"
             android:orientation="vertical">
 
@@ -48,12 +48,12 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10sp"
                     android:text="@string/tv_time"
-                    android:textSize="30sp" />
+                    android:textSize="26sp" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_day"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 />
@@ -61,11 +61,10 @@
         <LinearLayout
             android:id="@+id/ll_item_detail"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="2"
             android:orientation="vertical"
-            android:maxLines="1"
-            android:ellipsize="end"
+            android:paddingLeft="10sp"
             android:visibility="gone"
             >
             <TextView
@@ -75,7 +74,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:textSize="14sp"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:ellipsize="end"
                 />
             <TextView
@@ -84,23 +83,21 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textSize="14sp"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:ellipsize="end"
                 />
 
         </LinearLayout>
-
-
         <LinearLayout
+            android:id="@+id/ll_alarm_icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:orientation="vertical">
-
             <ImageView
                 android:id="@+id/iv_useAlarm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40sp"
+                android:layout_height="40sp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="-5dp"
                 android:background="@drawable/ic_alarm_on" />
@@ -119,6 +116,7 @@
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
             />
 
     </LinearLayout>

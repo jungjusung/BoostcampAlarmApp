@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,9 +42,10 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
     Switch mUse;
     ImageView mAlarmImage;
     ImageView mEditImage;
-    LinearLayout mItemLayout;
+    LinearLayout mItemLayout,mAlarmIconLayout;
     private Realm realm;
     String TAG;
+    Animation mFadeIn, mFadeOut;
     Context context;
     private AlarmAdapter.ListItemClickListener mOnClickListener;
 
@@ -62,6 +65,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
         mEditImage = (ImageView) itemView.findViewById(R.id.iv_edit_icon);
         mUse = (Switch) itemView.findViewById(R.id.sw_use);
         mItemLayout=(LinearLayout)itemView.findViewById(R.id.ll_item_detail);
+        mAlarmIconLayout=(LinearLayout)itemView.findViewById(R.id.ll_alarm_icon);
         itemView.setOnClickListener(this);
         mUse.setOnCheckedChangeListener(this);
     }
@@ -99,9 +103,19 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
             mAlarmSoundName.setText(alarm.getAlarm_sound_name());
             mAlarmMemo.setText(alarm.getAlarm_memo());
             if (isEditing) {
+                mFadeOut = AnimationUtils.loadAnimation(context, R.anim.fadeout);
+                mFadeIn = AnimationUtils.loadAnimation(context, R.anim.fadein);
+                mAlarmIconLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+                mEditImage.startAnimation(mFadeIn);
+                mItemLayout.startAnimation(mFadeOut);
                 mEditImage.setVisibility(View.VISIBLE);
                 mItemLayout.setVisibility(View.GONE);
             } else {
+                mFadeOut = AnimationUtils.loadAnimation(context, R.anim.fadeout);
+                mFadeIn = AnimationUtils.loadAnimation(context, R.anim.fadein);
+                mAlarmIconLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f));
+                mItemLayout.startAnimation(mFadeIn);
+                mEditImage.startAnimation(mFadeOut);
                 mEditImage.setVisibility(View.GONE);
                 mItemLayout.setVisibility(View.VISIBLE);
             }
@@ -120,11 +134,13 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnC
         RealmResults<Alarm> list=realm.where(Alarm.class).findAll();
         Alarm alarm=list.get(index);
         if(isChecked){
+            mAlarmImage.setBackgroundResource(R.drawable.ic_alarm_on);
             realm.beginTransaction();
             alarm.setAlarm_isDoing(true);
             realm.insertOrUpdate(alarm);
             realm.commitTransaction();
         }else{
+            mAlarmImage.setBackgroundResource(R.drawable.ic_alarm_off);
             realm.beginTransaction();
             alarm.setAlarm_isDoing(false);
             realm.insertOrUpdate(alarm);

@@ -21,15 +21,10 @@ import io.realm.RealmResults;
  */
 
 public class BootReceiver extends BroadcastReceiver {
-    private String TAG;
     private String[] mDays = new String[]{"", "일", "월", "화", "수", "목", "금", "토"};
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "부트리시버작동", Toast.LENGTH_SHORT).show();
-        TAG = this.getClass().getName();
-        Log.d(TAG, "부트리시버 작동");
-
 
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Alarm> list = realm.where(Alarm.class).findAll();
@@ -99,7 +94,7 @@ public class BootReceiver extends BroadcastReceiver {
                 manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingNotiIntent);
                 manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingActivityIntent);
             } else {
-                //반복함
+                //3분씩 반복함
                 manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingNotiIntent);
                 manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
             }
@@ -109,7 +104,7 @@ public class BootReceiver extends BroadcastReceiver {
                 manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingNotiIntent);
                 manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + addTime, pendingActivityIntent);
             } else {
-                //반복함
+                //3분씩 반복함
                 manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingNotiIntent);
                 manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 3 * 60 * 1000, pendingActivityIntent);
             }

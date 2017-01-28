@@ -51,6 +51,7 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
     private static final int REQUEST_SOUND = 1;
     private static final int REQUEST_ITERATION = 2;
     Animation mFadeIn, mFadeOut;
+    Resources system;
 
     LinearLayout mSound;
     LinearLayout mIteration;
@@ -448,5 +449,39 @@ public class AlarmDetail extends AppCompatActivity implements View.OnClickListen
             e.printStackTrace();
         }
         return nowAddress;
+    }
+    private void set_numberpicker_text_colour(NumberPicker number_picker) {
+        final int count = number_picker.getChildCount();
+        final NumberPicker c = number_picker;
+        for (int i = 0; i < count; i++) {
+            final View child = number_picker.getChildAt(i);
+
+            try {
+                Field wheelpaint_field = number_picker.getClass().getDeclaredField("mSelectorWheelPaint");
+                wheelpaint_field.setAccessible(true);
+                int selectedColor = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark);
+                ((Paint) wheelpaint_field.get(number_picker)).setColor(selectedColor);
+                ((EditText) child).setTextColor(selectedColor);
+                number_picker.invalidate();
+            } catch (NoSuchFieldException e) {
+            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException e) {
+            }
+        }
+    }
+
+
+    private void set_timepicker_text_colour() {
+        system = Resources.getSystem();
+        int hour_numberpicker_id = system.getIdentifier("hour", "id", "android");
+        int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
+        int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
+        NumberPicker hour_numberpicker = (NumberPicker) mTimePicker.findViewById(hour_numberpicker_id);
+        NumberPicker minute_numberpicker = (NumberPicker) mTimePicker.findViewById(minute_numberpicker_id);
+        NumberPicker ampm_numberpicker = (NumberPicker) mTimePicker.findViewById(ampm_numberpicker_id);
+
+        set_numberpicker_text_colour(hour_numberpicker);
+        set_numberpicker_text_colour(minute_numberpicker);
+        set_numberpicker_text_colour(ampm_numberpicker);
     }
 }

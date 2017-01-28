@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_default"
             android:textSize="16sp" />
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_wake_up_song"
             android:textSize="16sp" />
@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_minions"
             android:textSize="16sp" />
@@ -122,7 +122,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_jarvis"
             android:textSize="16sp" />
@@ -155,7 +155,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_cheer"
             android:textSize="16sp" />
@@ -186,7 +186,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_energy_sound"
             android:textSize="16sp" />
@@ -218,7 +218,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:gravity="left|center_vertical"
             android:text="@string/tv_mirotic_sound"
             android:textSize="16sp" />
